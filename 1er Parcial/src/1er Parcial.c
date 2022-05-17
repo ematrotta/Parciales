@@ -70,6 +70,8 @@ int main(void) {
 	int retornoProductoIngresado;
 	int flagPrimerProducto;
 	flagPrimerProducto = 1; //MODIFICAR A 0 CUANDO DESCOMENTE EL ARRAY DE PRODUCTOS
+	int auxiliarOpcionVender;
+	char auxiliarNombre[TAM_NOMBRE_PRODUCTO];
 
 	//********TRAKKING/VENTAS
 	sTrakking auxiliarTrakking;
@@ -101,124 +103,124 @@ int main(void) {
 		}
 		switch(OpcionMenuInicio)
 		{
-			case 0:
-				//SALIR
-				flagMenuPrincipal = 0;
-				break;
-			case 1:
-				//INGRESAR
-				//SI NO HAY USUARIOS
-				if(flagPrimerUsuario == 0)
+		case 0:
+			//SALIR
+			flagMenuPrincipal = 0;
+			break;
+		case 1:
+			//INGRESAR
+			//SI NO HAY USUARIOS
+			if(flagPrimerUsuario == 0)
+			{
+				puts("\nNo hay usuarios Ingresados en el sistema. Quiere ser el primero?\n"
+						"¡¡REGISTRESE!!");
+			}
+			else
+			{
+				//SOLICITO INGRESO DE MAIL Y CONTRASEÑA
+				if(Utn_GetMail(auxiliarMailIngresado, TAM_EMAIL, "\nIngrese su mail", "Error no es un mail", 3)==0)
 				{
-					puts("\nNo hay usuarios Ingresados en el sistema. Quiere ser el primero?\n"
-							"¡¡REGISTRESE!!");
-				}
-				else
-				{
-					//SOLICITO INGRESO DE MAIL Y CONTRASEÑA
-					if(Utn_GetMail(auxiliarMailIngresado, TAM_EMAIL, "\nIngrese su mail", "Error no es un mail", 3)==0)
+					Utn_GetString(auxiliarContraseniaIngresada, "Ingrese su contraseña", "ERROR. Max cantidad de caracteres 9",TAM_PASSWORD,3);
+					retornoIngresoUsuario = sUsuario_ValidarMailyPassword(usuario, USUARIOS, auxiliarMailIngresado, auxiliarContraseniaIngresada);
+					//VERIFICO CUAL FUE EL RESULTADO DEL INGRESO
+					switch(retornoIngresoUsuario)
 					{
-						Utn_GetString(auxiliarContraseniaIngresada, "Ingrese su contraseña", "ERROR. Max cantidad de caracteres 9",TAM_PASSWORD,3);
-						retornoIngresoUsuario = sUsuario_ValidarMailyPassword(usuario, USUARIOS, auxiliarMailIngresado, auxiliarContraseniaIngresada);
-						//VERIFICO CUAL FUE EL RESULTADO DEL INGRESO
-						switch(retornoIngresoUsuario)
+					case 0:
+						flagIngresoSistema = 1;
+						break;
+					case -2:
+						//LA CONTRASEÑA ES ERRONEA
+						puts("La contraseña es incorrecta");
+						intentosContrasenia = 3;
+						while(intentosContrasenia>0)
 						{
-						case 0:
-							flagIngresoSistema = 1;
-							break;
-						case -2:
-							//LA CONTRASEÑA ES ERRONEA
-							puts("La contraseña es incorrecta");
-							intentosContrasenia = 3;
-							while(intentosContrasenia>0)
+							Utn_GetString(auxiliarContraseniaIngresada, "Ingrese Nuevamente la contraseña", "ERROR. Max cantidad de caracteres 9",TAM_PASSWORD,3);
+							if(sUsuario_ValidarMailyPassword(usuario, USUARIOS, auxiliarMailIngresado, auxiliarContraseniaIngresada)==0)
 							{
-								Utn_GetString(auxiliarContraseniaIngresada, "Ingrese Nuevamente la contraseña", "ERROR. Max cantidad de caracteres 9",TAM_PASSWORD,3);
-								if(sUsuario_ValidarMailyPassword(usuario, USUARIOS, auxiliarMailIngresado, auxiliarContraseniaIngresada)==0)
-								{
-									//SI INGRESO BIEN LOS DATOS, ROMPO E INGRESO AL SISTEMA
-									retornoIngresoUsuario = 0;
-									flagIngresoSistema = 1;
-									break;
-								}
-								else
-								{
-									printf("\nTiene %d intentos más\n",intentosContrasenia-1);
-									intentosContrasenia--;
-
-								}
+								//SI INGRESO BIEN LOS DATOS, ROMPO E INGRESO AL SISTEMA
+								retornoIngresoUsuario = 0;
+								flagIngresoSistema = 1;
+								break;
 							}
-							if(intentosContrasenia == 0)
+							else
 							{
-								//SI NO PUDO INGRESAR BIEN LA CONTRASEÑA, VUELVE AL INICIO
-								flagMenuPrincipal = 1;
-							}
+								printf("\nTiene %d intentos más\n",intentosContrasenia-1);
+								intentosContrasenia--;
 
-							break;
-						case -3:
-							puts("El mail no existe.");
-							//SI EL MAIL NO EXISTE, PUEDE CREAR UNO
-							if(GetCharacter2Options(&opcionRegistro, "Desea registrarse? S/N", "Error S (Si) o N (No)", 'S', 'N', 3)==0)
+							}
+						}
+						if(intentosContrasenia == 0)
+						{
+							//SI NO PUDO INGRESAR BIEN LA CONTRASEÑA, VUELVE AL INICIO
+							flagMenuPrincipal = 1;
+						}
+
+						break;
+					case -3:
+						puts("El mail no existe.");
+						//SI EL MAIL NO EXISTE, PUEDE CREAR UNO
+						if(GetCharacter2Options(&opcionRegistro, "Desea registrarse? S/N", "Error S (Si) o N (No)", 'S', 'N', 3)==0)
+						{
+							//SI EL INGRESO DE DATOS SE PUDO REALIZAR CORRECTAMENTE
+							if(opcionRegistro == 's' || opcionRegistro == 'S')
 							{
-								//SI EL INGRESO DE DATOS SE PUDO REALIZAR CORRECTAMENTE
-								if(opcionRegistro == 's' || opcionRegistro == 'S')
+								if(sUsuario_InputsDataUsuario(&axiliarUsuario, "No se pudo registrar correcatmente")==0)
 								{
-									if(sUsuario_InputsDataUsuario(&axiliarUsuario, "No se pudo registrar correcatmente")==0)
+									retornoMailIngresado = sUsuario_addUsuario(usuario, USUARIOS, axiliarUsuario.domicilio, axiliarUsuario.correo, axiliarUsuario.password, axiliarUsuario.tipoUsuario, axiliarUsuario.codigoPostal);
+									if(retornoMailIngresado ==0)
 									{
-										retornoMailIngresado = sUsuario_addUsuario(usuario, USUARIOS, axiliarUsuario.domicilio, axiliarUsuario.correo, axiliarUsuario.password, axiliarUsuario.tipoUsuario, axiliarUsuario.codigoPostal);
-										if(retornoMailIngresado ==0)
-										{
-											puts("\nIngreso Exitoso!\n");
+										puts("\nIngreso Exitoso!\n");
 
+									}
+									else
+									{
+										if(retornoMailIngresado == -2)
+										{
+											puts("\nEl Mail ya se encuentra registrado\n");
 										}
 										else
 										{
-											if(retornoMailIngresado == -2)
-											{
-												puts("\nEl Mail ya se encuentra registrado\n");
-											}
-											else
-											{
-												puts("\nLo sentimos. Ya no hay espacio para cargar un nuevo usuario\n");
-											}
+											puts("\nLo sentimos. Ya no hay espacio para cargar un nuevo usuario\n");
 										}
 									}
-
 								}
+
 							}
-
 						}
-					}
 
+					}
 				}
-				//DE CUALQUIER MANERA VUELVE AL MENU DE INICIO
-				flagMenuPrincipal = 1;
-				break;
-			case 2:
-				//REGISTRARSE
-				//SI SE INGRESARON LOS DATOS CORRECTAMENTE O NO, VUELVO AL INICIO
-				if(sUsuario_InputsDataUsuario(&axiliarUsuario, "No se pudo registrar correcatmente")==0)
+
+			}
+			//DE CUALQUIER MANERA VUELVE AL MENU DE INICIO
+			flagMenuPrincipal = 1;
+			break;
+		case 2:
+			//REGISTRARSE
+			//SI SE INGRESARON LOS DATOS CORRECTAMENTE O NO, VUELVO AL INICIO
+			if(sUsuario_InputsDataUsuario(&axiliarUsuario, "No se pudo registrar correcatmente")==0)
+			{
+				retornoMailIngresado = sUsuario_addUsuario(usuario, USUARIOS, axiliarUsuario.domicilio, axiliarUsuario.correo, axiliarUsuario.password, axiliarUsuario.tipoUsuario, axiliarUsuario.codigoPostal);
+				if(retornoMailIngresado ==0)
 				{
-					retornoMailIngresado = sUsuario_addUsuario(usuario, USUARIOS, axiliarUsuario.domicilio, axiliarUsuario.correo, axiliarUsuario.password, axiliarUsuario.tipoUsuario, axiliarUsuario.codigoPostal);
-					if(retornoMailIngresado ==0)
+					puts("\nIngreso Exitoso!\n");
+					flagPrimerUsuario = 1;
+				}
+				else
+				{
+					if(retornoMailIngresado == -2)
 					{
-						puts("\nIngreso Exitoso!\n");
-						flagPrimerUsuario = 1;
+						puts("El Mail ya se encuentra registrado\n");
 					}
 					else
 					{
-						if(retornoMailIngresado == -2)
-						{
-							puts("El Mail ya se encuentra registrado\n");
-						}
-						else
-						{
-							puts("\nLo sentimos. Ya no hay espacio para cargar un nuevo usuario\n");
-						}
+						puts("\nLo sentimos. Ya no hay espacio para cargar un nuevo usuario\n");
 					}
-
 				}
-				flagMenuPrincipal = 1;
-				break;
+
+			}
+			flagMenuPrincipal = 1;
+			break;
 		}
 
 		//INGRESO AL SISTEMA
@@ -243,169 +245,220 @@ int main(void) {
 						{
 							switch(OpcionMenuSecundario)
 							{
-								case 0://SALIR DE LA CUENTA
-									//SACO AL USUARIO QUE PUEDA ESTAR LOGEADO
-									flagIngresoSistema = 0;
-									//SALGO DEL MENU DE USUARIO
-									flagMenuUsuario = 0;
-									flagMenuPrincipal = 1;
-									break;
-								case 1://COMPRAR
-									//SI NO HAY PRODUCTOS CARGADOS, NO SE PUEDE COMPRAR
-									if(flagPrimerProducto == 0)
-									{
-										puts("\nNo hay ningún producto cargado en la base\n"
-												"seleccione la opción 'Vender' e ingrese el 1ro!");
-										flagMenuUsuario = 1;
-									}
-									else
-									{
-										puts("\nQué Producto desea comprar?:\n");
-										//ORDENO LOS PRODUCTOS POR CATEGORIA ASCENDENTE
-										sProducto_sortProductosByCategory(productos, PRODUCTOS, 1);
-										//SI HAY PRODUTOS EN ALGUNA CATEGORIA LOS IMPRIMO
-										if(sProducto_printAllProductoByCategory(productos, PRODUCTOS) == 0)
-										{
-											//PIDO
-											Utn_GetNumeroInt(&axuiliarIdProducto, "Ingrese el ID del producto o 0 para volver al menu", "El id debe estar entre 100000 y 1000", 100000, 0, 3);
-											{
-												if(axuiliarIdProducto == 0)
-												{
-													//SI LA OPCION INGRESADA ES 0 VUELVE AL MENU DE USUARIO
-												}
-												else
-												{
-													indexIdProducto = sProducto_findProductoById(productos, PRODUCTOS, axuiliarIdProducto);
-													//SI SE ENCONTRO UN UNIDICE Y ESTA HABILITADO PARA LA COMPRA
-													if(indexIdProducto>= 0 && productos[indexIdProducto].isEmpty == FALSE)
-													{
-														//SI ENCUENTRA EL ID DEL PRODUCTO QUE INGRESO
-														printf("\nCantidad actual: %d\n",productos[indexIdProducto].stock);
-														//PERMITE INGRESAR LA CANTIDAD
-														if(Utn_GetNumeroInt(&cantidadProducto, "Cantidad a comprar", "Debe comprar entre 1 y el maximo de stock",productos[indexIdProducto].stock,1, 3)==0)
-														{
-															//SI LA CANTIDAD A COMPRAR ES MENOR QUE LA DISPONIBLE PERMITE SE CARGAN LOS DATOS A UN TRAKKING AUXILIAR
-															if(sTrakking_InputsDataTrakking(&auxiliarTrakking, "No se pudo cargar la compra correctamente", usuario[indexUsuarioEnSistema], axuiliarIdProducto, cantidadProducto, productos, PRODUCTOS)==0)
-															{
-																importeAbonar = sProducto_importePorCompra(productos, PRODUCTOS, cantidadProducto, productos[indexIdProducto].idProducto);
-																printf("\nEl importe a abonar es de %.2f\n",importeAbonar);
-																//SE PIDE LA CONFIRMACION PARA TERMINAR DE GENERAR EL TRAKKING
-																if(GetCharacter2Options(&opcionConfirmarTrakking, "Desea confirmar la operación? S/N", "La respuesta debe ser S (si) / N (no)", 'S', 'N', 3) == 0)
-																{
-																	if(opcionConfirmarTrakking == 'S' || opcionConfirmarTrakking == 's')
-																	{
-																		//SI CONFIRMA, SE GENERA EL TRAKKING EN UN ESPACIO LIBRE
-																		if(sTrakking_addTrakking(trakkings, TRAKKINGS, auxiliarTrakking.distanciaKm, auxiliarTrakking.cantidad, auxiliarTrakking.FK_idProducto, auxiliarTrakking.FK_idVendedor, auxiliarTrakking.FK_idComprador) == 0)
-																		{
-																			productos[indexIdProducto].stock -= auxiliarTrakking.cantidad;
-																			puts("\nYa es tuyo y está en camino\n");
-																			//EVALUO SI EL PRODUCTO DEJO DE TENER STOCK Y LO PAUSO
-																			sProducto_PausarProducto(productos, PRODUCTOS, productos[indexIdProducto].idProducto);
-																			flagPrimerTrakking = 1;
-																		}
-																		else
-																		{
-																			//SI YA NO HAY ESPACIO EN EL ARRAY DE TRAKKING
-																			puts("\nEl sistema ya no admite compras\n");
-																		}
-
-																	}
-
-																}
-															}
-														}
-
-													}
-													else
-													{
-														//SI NO SE ENCONTRÓ EL INDICE DEL PRODUCTO SELECCIONADO O NO ESTA ACTIVO VUELVO AL MENU
-														puts("\nNo se encontró el producto seleccionado\n");
-
-													}
-												}
-											}
-
-										}
-										else
-										{
-											//SI NO HAY PRODUCTOS PUBLICADOS
-											puts("\nNo hay productos publicados\n");
-										}
-
-									}
+							case 0://SALIR DE LA CUENTA
+								//SACO AL USUARIO QUE PUEDA ESTAR LOGEADO
+								flagIngresoSistema = 0;
+								//SALGO DEL MENU DE USUARIO
+								flagMenuUsuario = 0;
+								flagMenuPrincipal = 1;
+								break;
+							case 1://COMPRAR
+								//SI NO HAY PRODUCTOS CARGADOS, NO SE PUEDE COMPRAR
+								if(flagPrimerProducto == 0)
+								{
+									puts("\nNo hay ningún producto cargado en la base\n"
+											"seleccione la opción 'Vender' e ingrese el 1ro!");
 									flagMenuUsuario = 1;
-									break;
-								case 2://VENDER
-									//CARGAR PRODUCTO NUEVO
-									puts("\nVamos a preparar la publicacion\n");
-									if(sProducto_InputsDataProducto(&axiliarProducto, "No se pudo ingresar el producto correctamente")==0)
+								}
+								else
+								{
+									puts("\nQué Producto desea comprar?:\n");
+									//ORDENO LOS PRODUCTOS POR CATEGORIA ASCENDENTE
+									sProducto_sortProductosByCategory(productos, PRODUCTOS, 1);
+									//SI HAY PRODUTOS EN ALGUNA CATEGORIA LOS IMPRIMO
+									if(sProducto_printAllProductoByCategory(productos, PRODUCTOS) == 0)
 									{
-										//CARGO EN UN AUXILIAR LOS DATOS DEL PRODUCTO
-										retornoProductoIngresado = sProducto_addProducto(productos, PRODUCTOS, axiliarProducto.nombreDelProducto, axiliarProducto.precio, axiliarProducto.categoria, axiliarProducto.stock, usuario[indexUsuarioEnSistema]);
-										if(retornoProductoIngresado ==0)
+										//PIDO
+										Utn_GetNumeroInt(&axuiliarIdProducto, "Ingrese el ID del producto o 0 para volver al menu", "El id debe estar entre 100000 y 1000", 100000, 0, 3);
 										{
-											puts("\nIngreso Exitoso!\n");
-											flagPrimerProducto = 1;
-										}
-										else
-										{
-											puts("\nLo sentimos. Ya no hay espacio para cargar un nuevo producto\n");
-										}
-									}
-
-									flagMenuUsuario =1;
-									break;
-								case 3://ESTADO DE COMPRAS
-									//ORDENO LOS TRAKKINGS POR SU ID
-									sTrakking_sortTrakkings(trakkings, TRAKKINGS, -1);
-									//ACTUALIZO LOS ESTADOS DE TODOS LOS TRAKKINGS
-									sTrakking_ActualizarEstadosTrakking(trakkings, TRAKKINGS);
-									printf("\n|%-15s|%-25s|%-15s|%-15s\n","ID TRAKKING","NOMBRE DEL PRODUCTO","CANTIDAD","ESTADO");
-									if(sTrakking_printAllByTypeUser(trakkings, TRAKKINGS, productos, PRODUCTOS, usuario[indexUsuarioEnSistema].idUsuario, 1)!=0)
-									{
-										puts("Usted no tiene compras\n");
-									}
-									else
-									{
-										//PREGUNTO SI QUIERE DAR DE BAJA ALGUN TRAKKING
-										if(Utn_GetNumeroInt(&auxiliarBajaTrekking, "Desea dar algúna compra de baja? Ingrese ID o 0 para volver al menú", "ERROR. Debe ingresar un número entre ", 1000000, 0, 3)==0)
-										{
-											if(auxiliarBajaTrekking == 0)
+											if(axuiliarIdProducto == 0)
 											{
-												//VOLVER AL MENU
+												//SI LA OPCION INGRESADA ES 0 VUELVE AL MENU DE USUARIO
 											}
 											else
 											{
-												//ACTUALIZO EL TRAKKING HASTA ULTIMO MOMENTO
-												if(sTrakking_ActualizarEstadosTrakking(trakkings, TRAKKINGS)==0 && sTrakking_BajaTrakking(trakkings,TRAKKINGS, auxiliarBajaTrekking)==0)
+												indexIdProducto = sProducto_findProductoById(productos, PRODUCTOS, axuiliarIdProducto);
+												//SI SE ENCONTRO UN UNIDICE Y ESTA HABILITADO PARA LA COMPRA
+												if(indexIdProducto>= 0 && productos[indexIdProducto].isEmpty == FALSE)
 												{
-													puts("\nCompra cancelada\n");
-													//DEVUELVO AL STOCK LA CANTIDAD DEL TRAKKING, SI HABÍA QUEDADO PAUSADA POR FALTA DE STOCK, LA REACTIVO
-													sTrakking_DevolverStock(trakkings,TRAKKINGS,auxiliarBajaTrekking,productos,PRODUCTOS);
+													//SI ENCUENTRA EL ID DEL PRODUCTO QUE INGRESO
+													printf("\nCantidad actual: %d\n",productos[indexIdProducto].stock);
+													//PERMITE INGRESAR LA CANTIDAD
+													if(Utn_GetNumeroInt(&cantidadProducto, "Cantidad a comprar", "Debe comprar entre 1 y el maximo de stock",productos[indexIdProducto].stock,1, 3)==0)
+													{
+														//SI LA CANTIDAD A COMPRAR ES MENOR QUE LA DISPONIBLE PERMITE SE CARGAN LOS DATOS A UN TRAKKING AUXILIAR
+														if(sTrakking_InputsDataTrakking(&auxiliarTrakking, "No se pudo cargar la compra correctamente", usuario[indexUsuarioEnSistema], axuiliarIdProducto, cantidadProducto, productos, PRODUCTOS)==0)
+														{
+															importeAbonar = sProducto_importePorCompra(productos, PRODUCTOS, cantidadProducto, productos[indexIdProducto].idProducto);
+															printf("\nEl importe a abonar es de %.2f\n",importeAbonar);
+															//SE PIDE LA CONFIRMACION PARA TERMINAR DE GENERAR EL TRAKKING
+															if(GetCharacter2Options(&opcionConfirmarTrakking, "Desea confirmar la operación? S/N", "La respuesta debe ser S (si) / N (no)", 'S', 'N', 3) == 0)
+															{
+																if(opcionConfirmarTrakking == 'S' || opcionConfirmarTrakking == 's')
+																{
+																	//SI CONFIRMA, SE GENERA EL TRAKKING EN UN ESPACIO LIBRE
+																	if(sTrakking_addTrakking(trakkings, TRAKKINGS, auxiliarTrakking.distanciaKm, auxiliarTrakking.cantidad, auxiliarTrakking.FK_idProducto, auxiliarTrakking.FK_idVendedor, auxiliarTrakking.FK_idComprador) == 0)
+																	{
+																		productos[indexIdProducto].stock -= auxiliarTrakking.cantidad;
+																		puts("\nYa es tuyo y está en camino\n");
+																		//EVALUO SI EL PRODUCTO DEJO DE TENER STOCK Y LO PAUSO
+																		sProducto_PausarProducto(productos, PRODUCTOS, productos[indexIdProducto].idProducto);
+																		flagPrimerTrakking = 1;
+																	}
+																	else
+																	{
+																		//SI YA NO HAY ESPACIO EN EL ARRAY DE TRAKKING
+																		puts("\nEl sistema ya no admite compras\n");
+																	}
+
+																}
+
+															}
+														}
+													}
 
 												}
 												else
 												{
-													puts("\nEl id no se encontro o la compra ya esta cumplida/cancelada\n");
+													//SI NO SE ENCONTRÓ EL INDICE DEL PRODUCTO SELECCIONADO O NO ESTA ACTIVO VUELVO AL MENU
+													puts("\nNo se encontró el producto seleccionado\n");
+
 												}
 											}
-
 										}
+
 									}
-
-									flagMenuUsuario =1;
-
-									break;
-								case 4://ESTADO DE VENTAS
-									sTrakking_sortTrakkings(trakkings, TRAKKINGS, -1);
-									sTrakking_ActualizarEstadosTrakking(trakkings, TRAKKINGS);
-									printf("\n|%-15s|%-25s|%-15s|%-15s\n","ID TRAKKING","NOMBRE DEL PRODUCTO","CANTIDAD","ESTADO");
-									if(sTrakking_printAllByTypeUser(trakkings, TRAKKINGS, productos, PRODUCTOS, usuario[indexUsuarioEnSistema].idUsuario, 0)!=0)
+									else
 									{
-										puts("Usted no tiene ventas\n");
+										//SI NO HAY PRODUCTOS PUBLICADOS
+										puts("\nNo hay productos publicados\n");
 									}
-									flagMenuUsuario =1;
-									break;
+
+								}
+								flagMenuUsuario = 1;
+								break;
+							case 2://VENDER
+
+								if(Utn_GetNumeroInt(&auxiliarOpcionVender, "Ingrese una de las opiones:\n\n1)Alta de Producto\n2)Reponer Stock\n0)Volver al menú\n\nOPCIÓN", "Debe ser entre 2 y 0", 2, 0, 3)==0)
+								{
+									switch(auxiliarOpcionVender)
+									{
+									case 0:
+										break;
+									case 2:
+										//CARGAR PRODUCTO NUEVO
+										puts("\nVamos a preparar la publicacion\n");
+										if(sProducto_InputsDataProducto(&axiliarProducto, "No se pudo ingresar el producto correctamente")==0)
+										{
+											//CARGO EN UN AUXILIAR LOS DATOS DEL PRODUCTO
+											retornoProductoIngresado = sProducto_addProducto(productos, PRODUCTOS, axiliarProducto.nombreDelProducto, axiliarProducto.precio, axiliarProducto.categoria, axiliarProducto.stock, usuario[indexUsuarioEnSistema]);
+											if(retornoProductoIngresado ==0)
+											{
+												puts("\nIngreso Exitoso!\n");
+												flagPrimerProducto = 1;
+											}
+											else
+											{
+												puts("\nLo sentimos. Ya no hay espacio para cargar un nuevo producto\n");
+											}
+										}
+										break;
+									case 3:
+										puts("\nA que producto desea reponer stock?\n");
+										if(sProducto_printProductsByUser(productos, PRODUCTOS, usuario[indexUsuarioEnSistema].idUsuario)==0)
+										{
+											//PIDO EL ID DE PRODUCTO
+											if(Utn_GetNumeroInt(&axuiliarIdProducto, "Ingrese el ID", "El ID debe estar entre 1000000 y 1", 1000000, 1, 3)==0)
+											{
+												//VALIDO QUE LE CORRESPONDA AL USUARIO
+												indexIdProducto = sProducto_findProductoByIdUser(productos, PRODUCTOS, axuiliarIdProducto, usuario[indexUsuarioEnSistema].idUsuario);
+												if(indexIdProducto>=0)
+												{
+													//PIDO UNIDADES A AGREGAR
+													if(Utn_GetNumeroInt(&cantidadProducto, "Cuantas unidades desea agregar", "ERROR. Debe ser mayor que 0 y menor que 1000", 1000, 1, 3)==0)
+													{
+														//CONFIRMO
+														GetCharacter2Options(&opcionRegistro, "Confirmamos? S/N", "ERROR. S (si) o N (no)", 'S', 'N', 3);
+														if(opcionRegistro == 'S' || opcionRegistro == 's')
+														{
+															//SE AGREGAN UNIDADES AL STOCK. SI LA PUBLICACION ESTABA PAUSADA, SE REACTIVA
+															productos[indexIdProducto].stock += cantidadProducto;
+															puts("\nCantidad Agregada\n");
+															if(productos[indexIdProducto].isEmpty == PAUSED && (productos[indexIdProducto].stock>0))
+															{
+																productos[indexIdProducto].isEmpty = FALSE;
+															}
+														}
+													}
+												}
+												else
+												{
+													puts("\nEste producto no existe o es suyo. Intente más tarde\n");
+												}
+											}
+											else
+											{
+												puts("\nUsted no tiene productos o fueron dados de baja. Ingrese un producto e intente luego\n");
+
+											}
+										}
+										break;
+									}
+								}
+								flagMenuUsuario =1;
+
+								break;
+							case 3://ESTADO DE COMPRAS
+								//ORDENO LOS TRAKKINGS POR SU ID
+								sTrakking_sortTrakkings(trakkings, TRAKKINGS, -1);
+								//ACTUALIZO LOS ESTADOS DE TODOS LOS TRAKKINGS
+								sTrakking_ActualizarEstadosTrakking(trakkings, TRAKKINGS);
+								printf("\n|%-15s|%-25s|%-15s|%-15s\n","ID TRAKKING","NOMBRE DEL PRODUCTO","CANTIDAD","ESTADO");
+								if(sTrakking_printAllByTypeUser(trakkings, TRAKKINGS, productos, PRODUCTOS, usuario[indexUsuarioEnSistema].idUsuario, 1)!=0)
+								{
+									puts("Usted no tiene compras\n");
+								}
+								else
+								{
+									//PREGUNTO SI QUIERE DAR DE BAJA ALGUN TRAKKING
+									if(Utn_GetNumeroInt(&auxiliarBajaTrekking, "Desea dar algúna compra de baja? Ingrese ID o 0 para volver al menú", "ERROR. Debe ingresar un número entre ", 1000000, 0, 3)==0)
+									{
+										if(auxiliarBajaTrekking == 0)
+										{
+											//VOLVER AL MENU
+										}
+										else
+										{
+											//ACTUALIZO EL TRAKKING HASTA ULTIMO MOMENTO
+											if(sTrakking_ActualizarEstadosTrakking(trakkings, TRAKKINGS)==0 && sTrakking_BajaTrakking(trakkings,TRAKKINGS, auxiliarBajaTrekking)==0)
+											{
+												puts("\nCompra cancelada\n");
+												//DEVUELVO AL STOCK LA CANTIDAD DEL TRAKKING, SI HABÍA QUEDADO PAUSADA POR FALTA DE STOCK, LA REACTIVO
+												sTrakking_DevolverStock(trakkings,TRAKKINGS,auxiliarBajaTrekking,productos,PRODUCTOS);
+
+											}
+											else
+											{
+												puts("\nEl id no se encontro o la compra ya esta cumplida/cancelada\n");
+											}
+										}
+
+									}
+								}
+
+								flagMenuUsuario =1;
+
+								break;
+							case 4://ESTADO DE VENTAS
+								sTrakking_sortTrakkings(trakkings, TRAKKINGS, -1);
+								sTrakking_ActualizarEstadosTrakking(trakkings, TRAKKINGS);
+								printf("\n|%-15s|%-25s|%-15s|%-15s\n","ID TRAKKING","NOMBRE DEL PRODUCTO","CANTIDAD","ESTADO");
+								if(sTrakking_printAllByTypeUser(trakkings, TRAKKINGS, productos, PRODUCTOS, usuario[indexUsuarioEnSistema].idUsuario, 0)!=0)
+								{
+									puts("Usted no tiene ventas\n");
+								}
+								flagMenuUsuario =1;
+								break;
 							}
 						}
 						else
@@ -426,7 +479,8 @@ int main(void) {
 								"** 1er EXAMEN LAB 1 - H **\n"
 								"********** ADMIN *********\n\nGESTION E INFORMES\n\n"
 								"1)LISTAR ESTADO DE TODOS LOS USUARIOS\n2)LISTAR TODOS LOS PRODUCTOS POR CATEGORIA"
-								"\n3)BAJA DE UN PRODUCTO\n4)BAJA DE UN USUARIO\n5)VER TRAKKING GLOBAL\n0)SALIR\n\nOPCIÓN", "La opcion debe estar entre 0 y 5", 5, 0, 3)==0)
+								"\n3)BAJA DE UN PRODUCTO\n4)BAJA DE UN USUARIO\n5)VER TRAKKING GLOBAL\n"
+								"6)FILTRAR POR NOMBRE DEL PRODUCTOL\n0)SALIR\n\nOPCIÓN", "La opcion debe estar entre 0 y 6", 6, 0, 3)==0)
 						{
 
 							switch(OpcionMenuSecundario)
@@ -563,9 +617,29 @@ int main(void) {
 									sTrakking_printTrakkingsForAdmin(trakkings, TRAKKINGS);
 								}
 								puts("\n");
+								}
 								flagMenuUsuario =1;
 								break;
+							case 6:
+
+								if(flagPrimerProducto == 0)
+								{
+									puts("\nAún no se ingresaron productos al sistema\n");
 								}
+								else
+								{
+									if(Utn_GetString(auxiliarNombre, "\nIngrese un nombre a buscar", "ERROR. Cantidad maxima de caracteres 24", TAM_NOMBRE_PRODUCTO, 3)==0)
+									{
+										sProducto_sortProductosByStock(productos, PRODUCTOS, -1);
+										printf("\n|%-25s|%-30s|%-12s|%-15s|%-15s|%-10s|%-8s|\n","CATEGORIA","NOMBRE DEL PRODUCTO","PRECIO","ID PRODUCTO","ID USUARIO","STOCK","ESTADO");
+										if(sProducto_findProductoByNameAndPrint(productos,PRODUCTOS,auxiliarNombre)!=0)
+										{
+											puts("\nNo se encontraron productos con ese nombre\n");
+										}
+									}
+								}
+								flagMenuUsuario =1;
+								break;
 							}
 
 						}

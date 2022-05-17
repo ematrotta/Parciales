@@ -111,3 +111,36 @@ int sUsuario_removeUsuario(sUsuario* list, int len, int id,sProducto productos[]
 	return retorno;
 }
 
+/// @fn int sProducto_findProductoById(sProducto*, int, int,int)
+/// @brief Buscar y verificar que un id de producto corresponda a un id de usuario
+///
+/// @pre
+/// @post
+/// @param list array
+/// @param len tamaño del array
+/// @param id producto id a buscar
+/// @param id usuario al que corresponde
+/// @return -2 si array = NULL o tamaño de array<=0, -1 si no se encontró el id de producto, indice de producto si salio todo bien
+int sProducto_findProductoByIdUser(sProducto * list,int len,int idProducto,int idUsuario)
+{
+	int retorno;
+	int i;
+
+	retorno = -2;
+	if(list != NULL && len>0)
+	{
+		retorno = -1;
+		for(i = 0;i<len;i++)
+		{
+			if(list[i].idProducto == idProducto && list[i].FK_idUsuario == idUsuario)
+			{
+				retorno = i;
+				break;
+			}
+
+		}
+	}
+
+	return retorno;
+}
+

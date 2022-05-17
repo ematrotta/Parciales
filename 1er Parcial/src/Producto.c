@@ -128,6 +128,38 @@ int sProducto_findProductoByCategory(sProducto * list,int len,int categoria)
 	return retorno;
 }
 
+/// @fn int sProducto_findProductoByNameAndPrint(sProducto*, int, char name[])
+/// @brief Buscar productos con el nombre pedido e imprimir su informacion
+///
+/// @pre
+/// @post
+/// @param list array
+/// @param len tamaño del array
+/// @param categoria
+/// @return -2 si array = NULL o tamaño de array<=0, -1 si no se encontró ninguno con igual nombre, 0 si encontró al menos uno
+int sProducto_findProductoByNameAndPrint(sProducto * list,int len,char name[])
+{
+	int retorno;
+	int i;
+
+	retorno = -2;
+	if(list != NULL && len>0 && name != NULL)
+	{
+		retorno = -1;
+		for(i = 0;i<len;i++)
+		{
+			if(strncmp(list[i].nombreDelProducto,name,TAM_NOMBRE_PRODUCTO)==0)
+			{
+				sProducto_printOne(list[i]);
+				retorno = 0;
+			}
+
+		}
+	}
+
+	return retorno;
+}
+
 
 /// @fn int sProducto_InputsDataProducto(sProducto *, char[])
 /// @brief Ingresar datos a una entidad
@@ -343,7 +375,7 @@ int sProducto_printProductsByUser(sProducto* list,int len,int idUsuario)
 	{
 		for(i = 0;i<len;i++)
 		{
-			if(list[i].isEmpty == FALSE)
+			if(list[i].isEmpty == FALSE || list[i].isEmpty == PAUSED)
 			{
 				if(list[i].FK_idUsuario == idUsuario)
 				{
@@ -446,6 +478,88 @@ int sProducto_sortProductosByCategory(sProducto* list, int len, int order)
 
 	return retorno;
 }
+
+/// @fn int sProducto_sortProductosByStock(sProducto*, int, int)
+/// @brief Ordenar array de entidad segun STOCK
+///
+/// @pre
+/// @post
+/// @param list Array
+/// @param len Tamaño del array
+/// @param order 1 ascendente, -1 si es decreciente
+/// @return -1 si array = NULL o tamaño de array<=0 o Order != 1 o !=-1, 0 si salio bien
+int sProducto_sortProductosByStock(sProducto* list, int len, int order)
+{
+	int retorno;
+	int i;
+	int flagNoEstaOrdenado;
+
+	sProducto auxiliar;
+	flagNoEstaOrdenado = 1;
+
+	retorno = -1;
+
+	if(list != NULL && len>0 && (order == 1 || order == -1))
+	{
+		//ORDENAMIENTO ASCENDENTE
+		if(order == 1)
+		{
+			while(flagNoEstaOrdenado == 1)
+			{
+
+				//RECORRO LAS ENTIDADES Y COMPARO POSICION POSTERIOR CON
+				//POSICION ANTERIOR
+				flagNoEstaOrdenado = 0;
+				for(i=1;i<len;i++)
+				{
+					//SI SUECEDE QUE ES MAYOR EL ANTERIOR
+					if(list[i].stock < list[i-1].stock)
+					{
+						//CAMBIO LOS VALORES EN LAS  POSICIONES
+						auxiliar = list[i-1];
+						list[i-1] = list[i];
+						list[i] = auxiliar;
+						flagNoEstaOrdenado = 1;
+						//ROMPO
+						break;
+					}
+				}
+
+
+			}
+
+		}
+		//ORDENAMIENTO DESCENDENTE
+		else
+		{
+
+			while(flagNoEstaOrdenado == 1)
+			{
+				//RECORRO LAS ENTIDADES Y COMPARO POSICION POSICION POSTERIOR CON
+				//POSICION ANTERIOR
+				flagNoEstaOrdenado = 0;
+				for(i=1;i<len;i++)
+				{
+					//SI SUCEDE QUE ES MAYOR EL POSTERIOR
+					if(list[i].stock > list[i-1].stock)
+					{
+						auxiliar = list[i];
+						list[i] = list[i-1];
+						list[i-1] = auxiliar;
+						flagNoEstaOrdenado = 1;
+						//ROMPO
+						break;
+					}
+				}
+
+			}
+
+		}
+		retorno = 0;
+	}
+	return retorno;
+}
+
 
 /// @fn int sProducto_sortProductosByName(sProducto*, int, int)
 /// @brief Ordenar array de entidad según nombre de producto
