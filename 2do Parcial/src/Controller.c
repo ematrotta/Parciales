@@ -213,16 +213,20 @@ int controller_SalonsaveAsBinary(char* path , LinkedList* this)
 	Salon* auxSalon;
 	cantidadSalon = ll_len(this);
 	retorno = -1;
+
 	if(path != NULL && this != NULL)
 	{
 		retorno = -2;
 		pArchivo = fopen(path,"wb");
 		if(pArchivo != NULL)
 		{
-			for(i=0;i<cantidadSalon;i++)
+			if(cantidadSalon>0)
 			{
-				auxSalon = ll_get(this, i);
-				fwrite(auxSalon,sizeof(Salon),1,pArchivo);
+				for(i=0;i<cantidadSalon;i++)
+				{
+					auxSalon = ll_get(this, i);
+					fwrite(auxSalon,sizeof(Salon),1,pArchivo);
+				}
 			}
 			retorno = 0;
 		}
@@ -439,11 +443,15 @@ int controller_JuegosaveAsBinary(char* path , LinkedList* this)
 		pArchivo = fopen(path,"wb");
 		if(pArchivo != NULL)
 		{
-			for(i=0;i<cantidadJuegos;i++)
+			if(cantidadJuegos>0)
 			{
-				auxJuego = ll_get(this, i);
-				fwrite(auxJuego,sizeof(Salon),1,pArchivo);
+				for(i=0;i<cantidadJuegos;i++)
+				{
+					auxJuego = ll_get(this, i);
+					fwrite(auxJuego,sizeof(Salon),1,pArchivo);
+				}
 			}
+
 			retorno = 0;
 		}
 		fclose(pArchivo);
@@ -667,11 +675,15 @@ int controller_ArcadesaveAsBinary(char* path , LinkedList* this)
 		pArchivo = fopen(path,"wb");
 		if(pArchivo != NULL)
 		{
-			for(i=0;i<cantidadArcade;i++)
+			if(cantidadArcade>0)
 			{
-				auxArcade = ll_get(this, i);
-				fwrite(auxArcade,sizeof(Salon),1,pArchivo);
+				for(i=0;i<cantidadArcade;i++)
+				{
+					auxArcade = ll_get(this, i);
+					fwrite(auxArcade,sizeof(Salon),1,pArchivo);
+				}
 			}
+
 			retorno = 0;
 		}
 		fclose(pArchivo);

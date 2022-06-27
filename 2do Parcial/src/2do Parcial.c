@@ -19,12 +19,16 @@
 int main(void) {
 	setbuf(stdout,NULL);
 	int opcion;
+	int flagModificacion;
+	int retornoMenu;
 	int retornoControllerEditarArcade;
 	int retornoControllerRemoveArcade;
 	char opSalir;
 	LinkedList* pArraySalones = ll_newLinkedList();
 	LinkedList* pArrayJuegos = ll_newLinkedList();
 	LinkedList* pArrayArcades = ll_newLinkedList();
+
+	flagModificacion = 0;
 
 	controller_SalonloadFromBinary(ARCHIVO_SALON, pArraySalones); //IF TODOS -2, FLAG 0
 	controller_JuegoloadFromBinary(ARCHIVO_JUEGO, pArrayJuegos);
@@ -33,6 +37,7 @@ int main(void) {
 
 	do
 	{
+		retornoMenu = -1;
 		if(!Utn_GetNumeroInt(&opcion,"BIENVENDIO AL PROGRAMA\n\nIngrese una opcion:\n"
 				"Salon\n"
 				"\t1. Alta de Salon\n"
@@ -63,11 +68,15 @@ int main(void) {
 				"de juego, género y cantidad de jugadores que soporta el arcade. El listado deberá estar ordenado por nombre de juego.\n"
 				"\nOPCION", "ERROR La opcion debe ser entre ", 11, 1, 3))
 		{
+			retornoMenu = -2;
 			switch(opcion)
 			{
 			case 1:
 				//ALTA SALON
-				controller_addSalon(pArraySalones);
+				if(!controller_addSalon(pArraySalones))
+				{
+					flagModificacion = 1;
+				}
 				break;
 			case 2:
 				//ELIMINAR SALON Y ARCADES QUE LO TIENEN
@@ -76,6 +85,7 @@ int main(void) {
 					if(!controller_removeSalon(pArraySalones, pArrayArcades))
 					{
 						puts("\nSalon eliminado exitosamente\n");
+						flagModificacion = 1;
 					}
 					else
 					{
@@ -90,7 +100,11 @@ int main(void) {
 				break;
 			case 4:
 				//INCORPORAR ARCADE
-				if(controller_addArcade(pArrayArcades, pArrayJuegos, pArraySalones) != 0)
+				if(!controller_addArcade(pArrayArcades, pArrayJuegos, pArraySalones))
+				{
+					flagModificacion = 1;
+				}
+				else
 				{
 					puts("\nNo se pudo dar de alta. Verifique haber cargado al menos 1 juego y 1 salon primero\n");
 				}
@@ -98,7 +112,7 @@ int main(void) {
 			case 5:
 				//MODIFICAR ARCADE
 				retornoControllerEditarArcade = controller_editArcade(pArrayArcades, pArrayJuegos, pArraySalones);
-				if( retornoControllerEditarArcade != 0)
+				if(retornoControllerEditarArcade != 0)
 				{
 					puts("\nError. No se pudo modificar correctamete\n");
 					if(retornoControllerEditarArcade == -2)
@@ -109,10 +123,12 @@ int main(void) {
 				else
 				{
 					puts("\nModificacion Exitosa\n");
+					flagModificacion = 1;
 				}
 				break;
 			case 6:
 				//ELIMINAR ARCADE
+				controller_ListArcade(pArrayArcades, pArraySalones, pArrayJuegos);
 				retornoControllerRemoveArcade = controller_removeArcade(pArrayArcades);
 				if(retornoControllerRemoveArcade != 0)
 				{
@@ -125,6 +141,7 @@ int main(void) {
 				else
 				{
 					puts("\nBaja exitosa\n");
+					flagModificacion = 1;
 				}
 				break;
 			case 7:
@@ -133,7 +150,10 @@ int main(void) {
 				break;
 			case 8:
 				//AGREGAR JUEGO
-				controller_addJuego(pArrayJuegos);
+				if(!controller_addJuego(pArrayJuegos))
+				{
+					flagModificacion = 1;
+				}
 				break;
 			case 9:
 				//IMPRIMIR JUEGOS
@@ -146,12 +166,33 @@ int main(void) {
 				//SALIR
 				if(!GetCharacter2Options(&opSalir, "Desea salir? S/N", "ERROR. S (Si) o N (No)", 'S', 'N', 3))
 				{
-					//Guardar en los archivos Binarios
-					controller_SalonsaveAsBinary(ARCHIVO_SALON, pArraySalones);
-					controller_JuegosaveAsBinary(ARCHIVO_JUEGO, pArrayJuegos);
-					//Eliminar las LinkedList
-					ll_deleteLinkedList(pArraySalones);
-					ll_deleteLinkedList(pArrayJuegos);
+					//SI COLOCA QUE SI, EL RETORNO ES 0 Y PREGUNTA SI DESEA ADEMAS GUARDAR LOS CAMBIOS
+					if(opSalir == 'S' || opSalir == 's')
+					{
+						retornoMenu = 0;
+						//SI HUBO ALGUNA MODIFICACION PREGUNTO SI QUIERE GUARDAR LOS CABIOS
+						if(flagModificacion == 1)
+						{
+							if(!GetCharacter2Options(&opSalir, "Desea gurdar Los cambios? S/N", "ERROR. S (Si) o N (No)", 'S', 'N', 3))
+							{
+								if(opSalir == 'S' || opSalir == 's')
+								{
+									//Guardar en los archivos Binarios
+									controller_SalonsaveAsBinary(ARCHIVO_SALON, pArraySalones);
+									controller_JuegosaveAsBinary(ARCHIVO_JUEGO, pArrayJuegos);
+									controller_ArcadesaveAsBinary(ARCHIVO_ARCADE, pArrayArcades);
+								}
+							}
+						}
+
+						//Eliminar las LinkedList
+						ll_deleteLinkedList(pArraySalones);
+						ll_deleteLinkedList(pArrayJuegos);
+						ll_deleteLinkedList(pArrayArcades);
+
+					}
+
+
 				}
 
 				break;
@@ -159,8 +200,9 @@ int main(void) {
 
 		}
 
-	}while(opSalir != 'S' || opSalir != 's');
+		//SI ES -2 SIGO DENTRO DEL BUCLE. SI ES -1 SALGO CON EL RETORNO, Y SI ES 0  ES PORQUE QUISO SALIR
+	}while(retornoMenu == -2);
 
 
-	return EXIT_SUCCESS;
+	return retornoMenu;
 }
