@@ -8,14 +8,14 @@
  *
  */
 
-int parser_SalonFromBinary(FILE* pFile , LinkedList* this)
+int parser_SalonFromBinary(FILE* pFile , LinkedList* this) //OK
 {
 	int cantidadLecturas;
 	int retornoRead;
 	cantidadLecturas = 0;
 	Salon* auxSalon;
 
-	if(pFile != NULL && this)
+	if(pFile != NULL && this != NULL)
 	{
 		do
 		{
@@ -49,13 +49,13 @@ int parser_JuegoFromBinary(FILE* pFile , LinkedList* this)
 	cantidadLecturas = 0;
 	Juego* auxJuego;
 
-	if(pFile != NULL && this)
+	if(pFile != NULL && this != NULL)
 	{
 		do
 		{
 			//PRIMERO LE ASIGNO MEMORIA DINAMICA
 			auxJuego = Juego_new();
-			retornoRead = fread(auxJuego,sizeof(Salon),1,pFile);
+			retornoRead = fread(auxJuego,sizeof(Juego),1,pFile);
 			if(retornoRead == 1 && auxJuego != NULL)
 			{
 				ll_add(this, auxJuego);
@@ -83,13 +83,13 @@ int parser_ArcadeFromBinary(FILE* pFile , LinkedList* this)
 	cantidadLecturas = 0;
 	Arcade* auxArcade;
 
-	if(pFile != NULL && this)
+	if(pFile != NULL && this != NULL)
 	{
 		do
 		{
 			//PRIMERO LE ASIGNO MEMORIA DINAMICA
 			auxArcade = Arcade_new();
-			retornoRead = fread(auxArcade,sizeof(Salon),1,pFile);
+			retornoRead = fread(auxArcade,sizeof(Arcade),1,pFile);
 			if(retornoRead == 1 && auxArcade != NULL)
 			{
 				ll_add(this, auxArcade);

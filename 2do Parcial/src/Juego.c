@@ -506,6 +506,58 @@ int Juego_sortById(void* this1, void* this2)
 	return retorno;
 }
 
+/// @fn int Juego_sortByName(void*, void*)
+/// @brief Retornar un valor comparando 2 elementos de 1 estructura: Nombre
+///
+/// @pre
+/// @post
+/// @param this1
+/// @param this2
+/// @return -2 si ingresó mal alguno de los parámetros, -1 si el elemento 1 es menor que el 2, 1 si el elemento 1 es mayor que el
+///  2, 0 si ambos son iguales
+int Juego_sortByName(void* this1, void* this2)
+{
+	int retorno;
+	retorno = -1;
+	if(this1 != NULL && this2 != NULL)
+	{
+		Juego* JuegoUno;
+		Juego* JuegoDos;
+		//CASTEO LOS VOID*
+		JuegoUno = (Juego*)this1;
+		JuegoDos = (Juego*)this2;
+		char nombreUno[LEN_NAME_JUEGO];
+		char nombreDos[LEN_NAME_JUEGO];
+		int resultadoComparacion;
+
+		retorno = -2;
+		if(!Juego_getNombre(JuegoUno, nombreUno)&& !Juego_getNombre(JuegoDos, nombreDos))
+		{
+
+			resultadoComparacion = strncmp(nombreUno,nombreDos,LEN_NAME_JUEGO);
+			if(resultadoComparacion<0)
+			{
+				retorno = -1;
+			}
+			else
+			{
+				if(resultadoComparacion>0)
+				{
+					retorno = 1;
+				}
+				else
+				{
+					retorno = 0;
+				}
+
+			}
+		}
+	}
+
+	return retorno;
+}
+
+
 /// @fn int Juego_findById(LinkedList*, int)
 /// @brief Encontrar el indice de la lista donde se encuentra el id buscado
 ///
@@ -537,6 +589,51 @@ int Juego_findById(LinkedList* this, int id)
 			}
 
 		}
+
+
+	}
+	return retorno;
+}
+
+/// @fn int Juego_findByName(LinkedList*, char*)
+/// @brief Encontrar el indice del juego por el nombre
+///
+/// @pre
+/// @post
+/// @param this Array Juegos
+/// @param name nombreBuscado
+/// @return -1 si alguno de los parámetros es NULL, -2 si no hay juegos, Mayor o igual a 0 con el indice
+int Juego_findIdByName(LinkedList* this, char* name)
+{
+	int retorno = -1;
+	int i;
+	int cantidadJuego;
+	char cAuxName[LEN_NAME_JUEGO];
+	Juego* pAuxJuego;
+	pAuxJuego = NULL;
+	if(this != NULL && name != NULL)
+	{
+		retorno = -2;
+		cantidadJuego = ll_len(this);
+		if(cantidadJuego>0)
+		{
+			for(i = 0;i<cantidadJuego;i++)
+			{
+				pAuxJuego = ll_get(this, i);
+				if(pAuxJuego != NULL)
+				{
+					Juego_getNombre(pAuxJuego, cAuxName);
+					if(strncmp(cAuxName,name,LEN_NAME_JUEGO)==0)
+					{
+						retorno = i;
+						break;
+					}
+				}
+
+
+			}
+		}
+
 
 
 	}

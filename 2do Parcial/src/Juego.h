@@ -49,7 +49,9 @@ int Juego_SetLastId(int* pId, char* path);
 int Juego_GetIdJuegoFromBinary(int* pId, char* path);
 int Juego_InputsData(LinkedList* this,char mensajeError[]);
 int Juego_sortById(void* this1, void* this2);
+int Juego_sortByName(void* this1, void* this2);
 int Juego_findById(LinkedList* this, int id);
+int Juego_findByName(LinkedList* this, char* name);
 
 
 

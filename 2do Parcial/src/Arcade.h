@@ -57,12 +57,11 @@ int Arcade_setNacionalidad(Arcade* this,char* nacionalidad);
 int Arcade_getNacionalidad(Arcade* this,char* nacionalidad);
 int Arcade_SetLastId(int* pId, char* path);
 int Arcade_GetIdArcadeFromBinary(int* pId, char* path);
-
-
-//int Arcade_InputsData(LinkedList* this,char mensajeError[]);
 int Arcade_sortById(void* this1, void* this2);
+int Arcade_sortByIdJuego(void* this1, void* this2);
 int Arcade_findById(LinkedList* this, int id);
 int Arcade_findByIdSalon(LinkedList* this, int id);
+int Arcade_CuantitySalonByIdSalon(LinkedList* this, int id);
 
 
 

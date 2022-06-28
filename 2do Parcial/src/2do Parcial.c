@@ -10,7 +10,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "controller.h"
+#include "Informes.h"
 #define ARCHIVO_SALON "src/Salones.bin"
 #define ARCHIVO_JUEGO "src/Juegos.bin"
 #define ARCHIVO_ARCADE "src/Arcades.bin"
@@ -24,21 +24,25 @@ int main(void) {
 	int retornoControllerEditarArcade;
 	int retornoControllerRemoveArcade;
 	char opSalir;
+	char opSubmenu;
 	LinkedList* pArraySalones = ll_newLinkedList();
 	LinkedList* pArrayJuegos = ll_newLinkedList();
 	LinkedList* pArrayArcades = ll_newLinkedList();
 
+	//SE UTILIZA PARA CONSULTAR SI DESEA GUARDAR CAMBIOS EFECTUADOS EN LA LISTA.
 	flagModificacion = 0;
 
-	controller_SalonloadFromBinary(ARCHIVO_SALON, pArraySalones); //IF TODOS -2, FLAG 0
-	controller_JuegoloadFromBinary(ARCHIVO_JUEGO, pArrayJuegos);
-	controller_ArcadeloadFromBinary(ARCHIVO_ARCADE, pArrayArcades); //HACER CONTROLLERS
+
+	//CARGO ENTIDADES DESDE LOS ARCHIVOS SI ES QUE EXISTEN
+	controller_SalonloadFromBinary(ARCHIVO_SALON, pArraySalones); //OK
+	controller_JuegoloadFromBinary(ARCHIVO_JUEGO, pArrayJuegos); //OK
+	controller_ArcadeloadFromBinary(ARCHIVO_ARCADE, pArrayArcades); //OK
 
 
 	do
 	{
 		retornoMenu = -1;
-		if(!Utn_GetNumeroInt(&opcion,"BIENVENDIO AL PROGRAMA\n\nIngrese una opcion:\n"
+		if(!Utn_GetNumeroInt(&opcion,"\n\nIngrese una opcion:\n"
 				"Salon\n"
 				"\t1. Alta de Salon\n"
 				"\t2. Eliminar Salon\n"
@@ -51,22 +55,8 @@ int main(void) {
 				"Juego\n"
 				"\t8. Agregar Juego\n"
 				"\t9. Imprimir Juego\n"
-				"10. Informes\n"
-				"11. Salir\n"
-				"\tA) Listar los salones con más de 4 arcade. Indicando ID de salón, nombre, dirección y tipo de salón.\n"
-				"\tB) Listar  los  arcade  para  más  de  2  jugadores,  indicando  ID  de  arcade,  cantidad  de  jugadores,  nombre  del juego,  "
-				"su género y nombre del salón al que pertenece.\n"
-				"\tC) Listar toda la información de un salón en específico ingresado por el usuario. Imprimir ID de salón, nombre, tipo y "
-				"dirección.\n"
-				"\tD) Un salón se encuentra completo si posee al menos 4 juegos del género plataforma, 3 del género laberinto y 5 del "
-				"género Aventura. Listar los salones que cumplan con este mínimo de requisito.\n"
-				"\tE) Listar todos los arcades de un salón determinado ingresando su ID. Informar nombre y tipo de salón, listar todos los "
-				"arcade con sus datos junto con el nombre del juego que lo compone. \n"
-				"\tF) Imprimir el salón con más cantidad de arcade, indicando todos los datos del salón y la cantidad de arcade que posee. "
-				"Ordenado de manera ascendente.\n"
-				"\tG) Listar los arcades que cumplan con sonido MONO y el género de su juego sea PLATAFORMA, informando nombre "
-				"de juego, género y cantidad de jugadores que soporta el arcade. El listado deberá estar ordenado por nombre de juego.\n"
-				"\nOPCION", "ERROR La opcion debe ser entre ", 11, 1, 3))
+				"\n10. Informes\n"
+				"11. Salir\n\nOPCION", "ERROR La opcion debe ser entre ", 11, 1, 3))
 		{
 			retornoMenu = -2;
 			switch(opcion)
@@ -89,7 +79,7 @@ int main(void) {
 					}
 					else
 					{
-						puts("\nERROR. Algo salio mal\n");
+						puts("\nERROR. Algo salio mal. Verifique haber ingresado el ID Correcto\n");
 					}
 				}
 
@@ -161,12 +151,80 @@ int main(void) {
 				break;
 			case 10:
 				//INFORMES
+				if(!Utn_GetChar(&opSubmenu, "\tA) Listar los salones con más de 4 arcade.\n"
+						"\tB) Listar  los  arcade  para  más  de  2  jugadores,  indicando  ID  de  arcade,  cantidad  de  jugadores,  nombre  del juego,  "
+						"su género y nombre del salón al que pertenece.\n"
+						"\tC) Listar toda la información de un salón en específico ingresado por el usuario. Imprimir ID de salón, nombre, tipo y "
+						"dirección.\n"
+						"\tD) Un salón se encuentra completo si posee al menos 4 juegos del género plataforma, 3 del género laberinto y 5 del "
+						"género Aventura. Listar los salones que cumplan con este mínimo de requisito.\n"
+						"\tE) Listar todos los arcades de un salón determinado ingresando su ID. Informar nombre y tipo de salón, listar todos los "
+						"arcade con sus datos junto con el nombre del juego que lo compone. \n"
+						"\tF) Imprimir el salón con más cantidad de arcade, indicando todos los datos del salón y la cantidad de arcade que posee. "
+						"Ordenado de manera ascendente.\n"
+						"\tG) Listar los arcades que cumplan con sonido MONO y el género de su juego sea PLATAFORMA, informando nombre "
+						"de juego, género y cantidad de jugadores que soporta el arcade. El listado deberá estar ordenado por nombre de juego.\n"
+						"\nOPCION", "La opción debe ser entre A y G", 'G', 'A', 3))
+				{
+					switch(opSubmenu)
+					{
+					case 'A':
+						//LISTAR SALONES CON MÁS DE 4 ARCADE
+						if(Informes_listarSalonesConMas4Arcades(pArraySalones, pArrayArcades))
+						{
+							puts("\nNo hay Salones con más de 4 Arcades\n");
+						}
+					break;
+					case 'B':
+						//IMPRIMIR ARCADE PARA MAS 2 2 JUGADORES
+						if(Informes_printAcadeParaMas2Jugadores(pArrayArcades, pArrayJuegos, pArraySalones))
+						{
+							puts("\nNo hay Salones para más de 2 jugadores\n");
+						}
+					break;
+					case 'C':
+						//IMPRIMIR DATOS DE UN SALON ESPECIFICO
+						if(Informes_printOneSalon(pArraySalones))
+						{
+							puts("\nERROR. No se pudo listar, asegurate de haber cargado al menos un salon o verifica el id\n");
+						}
+					break;
+					case 'D':
+						//IMPRIMIR SALONES COMPLETOS
+						if(Informes_printSalonCompleto(pArraySalones, pArrayArcades, pArrayJuegos))
+						{
+							puts("\nNo hay salones completos\n");
+						}
+					break;
+					case 'E':
+						//IMPRIMIR SALON CON ARCADES Y NOMBRE DE JUEGOS
+						if(Informes_printSalonConArcadesYJuegos(pArraySalones, pArrayArcades, pArrayJuegos) == -3)
+						{
+							puts("\nVerifique haber ingresado el id de salon correcto\n");
+						}
+					break;
+					case 'F':
+						//IMPRIMIR SALON Y ARCADES CON MAYOR CANTIDAD DE ARCADES
+						if(Informes_printSalonConMasArcades(Arcade_sortById,0,pArraySalones, pArrayArcades, pArrayJuegos) == -4)
+						{
+							puts("\nNo hay Arcades para mostrar\n");
+						}
+					break;
+					case 'G':
+						//IMPRIMIR ARCADES POR ORDEN ASENDENTE DE NOMBRE DE JUEGO SEGUN GENERO PLATAFORMA Y TIPO DE SONIDO MONO
+						if(Informes_ImprimirJuegoPorNombreYCondiciones(Juego_sortByName, 1, pArrayJuegos, pArrayArcades, TIPO_PLAT, TIPE_MONO))
+						{
+							puts("\nNo hay Arcades Con las caracteristicas indicadas\n");
+						}
+					break;
+					}
+				}
 				break;
 			case 11:
 				//SALIR
 				if(!GetCharacter2Options(&opSalir, "Desea salir? S/N", "ERROR. S (Si) o N (No)", 'S', 'N', 3))
 				{
-					//SI COLOCA QUE SI, EL RETORNO ES 0 Y PREGUNTA SI DESEA ADEMAS GUARDAR LOS CAMBIOS
+					//SI COLOCA QUE SI, EL RETORNO ES 0 Y PREGUNTA SI DESEA ADEMAS GUARDAR LOS CAMBIOS (SI HUBO)
 					if(opSalir == 'S' || opSalir == 's')
 					{
 						retornoMenu = 0;
@@ -200,7 +258,8 @@ int main(void) {
 
 		}
 
-		//SI ES -2 SIGO DENTRO DEL BUCLE. SI ES -1 SALGO CON EL RETORNO, Y SI ES 0  ES PORQUE QUISO SALIR
+		//SI ES -2 SIGO DENTRO DEL BUCLE. SI ES -1 SALGO CON EL RETORNO PORQUE INGRESO EL USUARIO MAL LA OPCION
+		// MAS DE 3 VECES, Y SI ES 0  ES PORQUE QUISO SALIR
 	}while(retornoMenu == -2);
 
 

@@ -6,11 +6,11 @@
  *
  * \param path char*
  * \param this LinkedList*
- * \return int -1 si no se ingresó bien alguno de los parámetros, -2 si no se pudo abrir el archivo correctamente,
+ * \return int -1 si no se ingresó bien alguno de los parámetros, -2 si no se pudo abrir el archivo correctamente o no existe,
  * 0 si se pudo realizar más de una lectura
  *
  */
-int controller_SalonloadFromBinary(char* path , LinkedList* this)
+int controller_SalonloadFromBinary(char* path , LinkedList* this) //OK
 {
 	int retorno;
 	int retornoParser;
@@ -25,12 +25,10 @@ int controller_SalonloadFromBinary(char* path , LinkedList* this)
 		if(pArchivo != NULL)
 		{
 			//CARGO LOS DATOS DEL ARCHIVO EN MEMORIA DINAMICA. SI LAS LECTURAS FUERON 0, RETORNO 1. SI SON
-			//MAYORES A 0 LAS LECTURAS, RETORNO 0.
+			//MAYORES A 0 LAS LECTURAS, RETORNO 0 Y SI EL PUNTERO AL ARCHIVO ES NULL PORQUE NO EXISTE ES -2
 			retornoParser = parser_SalonFromBinary(pArchivo, this);
 			if(retornoParser>0)
 			{
-				//CUANDO LOS LEVANTA, LOS ORDENA POR ID
-				controller_sortSalonById(this);
 				retorno = 0;
 
 			}
@@ -127,7 +125,7 @@ int controller_removeSalon(LinkedList* thisSalones,LinkedList* thisArcade)
  *
  * \param path char*
  * \param this LinkedList*
- * \return int -1 si no se ingresó bien alguno de los parámetros, -2 si no se pudieron ingresar los datos de los pasajeros correctamente,
+ * \return int -1 si no se ingresó bien alguno de los parámetros, -2 si no se pudieron ingresar los datos de los salones correctamente,
  * 0 si salio todo bien
  *
  */
@@ -222,6 +220,8 @@ int controller_SalonsaveAsBinary(char* path , LinkedList* this)
 		{
 			if(cantidadSalon>0)
 			{
+				//CUANDO LOS GUARDA, LOS GUARDA DE FORMA ORDENADA POR ID
+				controller_sortSalonById(this);
 				for(i=0;i<cantidadSalon;i++)
 				{
 					auxSalon = ll_get(this, i);
@@ -360,11 +360,11 @@ int controller_editSalon(LinkedList* this)
  *
  * \param path char*
  * \param this LinkedList*
- * \return int -1 si no se ingresó bien alguno de los parámetros, -2 si no se pudo abrir el archivo correctamente,
+ * \return int -1 si no se ingresó bien alguno de los parámetros, -2 si no se pudo abrir el archivo correctamente o no existe,
  * 0 si se pudo realizar más de una lectura
  *
  */
-int controller_JuegoloadFromBinary(char* path , LinkedList* this)
+int controller_JuegoloadFromBinary(char* path , LinkedList* this) //OK
 {
 	int retorno;
 	int retornoParser;
@@ -383,8 +383,7 @@ int controller_JuegoloadFromBinary(char* path , LinkedList* this)
 			retornoParser = parser_JuegoFromBinary(pArchivo, this);
 			if(retornoParser>0)
 			{
-				//CUANDO LOS LEVANTA, LOS ORDENA POR ID
-				controller_sortJuegoById(this);
+
 				retorno = 0;
 
 			}
@@ -408,7 +407,7 @@ int controller_JuegoloadFromBinary(char* path , LinkedList* this)
 /// @post
 /// @param this
 /// @return -1 si el puntero a LinkedList es NULL, 0 si salio todo bien
-int controller_sortJuegoById(LinkedList* this)
+int controller_sortJuegoById(LinkedList* this) //OK
 {
 	int retorno;
 	retorno = -1;
@@ -427,7 +426,7 @@ int controller_sortJuegoById(LinkedList* this)
 /// @post
 /// @param path
 /// @param this
-/// @return -1 si alguno de los parámetros es NULL, -2 si el puntero al archivo es NULL, 0 si salio todo bien
+/// @return -1 si alguno de los parámetros es NULL, -2 si el puntero al archivo es NULL o no existe, 0 si salio todo bien
 int controller_JuegosaveAsBinary(char* path , LinkedList* this)
 {
 	int retorno;
@@ -445,10 +444,12 @@ int controller_JuegosaveAsBinary(char* path , LinkedList* this)
 		{
 			if(cantidadJuegos>0)
 			{
+				//CUANDO LOS GUARDA, LOS ORDENA POR ID
+				controller_sortJuegoById(this);
 				for(i=0;i<cantidadJuegos;i++)
 				{
 					auxJuego = ll_get(this, i);
-					fwrite(auxJuego,sizeof(Salon),1,pArchivo);
+					fwrite(auxJuego,sizeof(Juego),1,pArchivo);
 				}
 			}
 
@@ -561,8 +562,7 @@ int controller_ArcadeloadFromBinary(char* path , LinkedList* this)
 			retornoParser = parser_ArcadeFromBinary(pArchivo, this);
 			if(retornoParser>0)
 			{
-				//CUANDO LOS LEVANTA, LOS ORDENA POR ID
-				controller_sortArcadeById(this);
+
 				retorno = 0;
 
 			}
@@ -632,7 +632,7 @@ int controller_ListArcade(LinkedList* thisArcades, LinkedList* thisSalones, Link
 		}
 		else
 		{
-			printf("%10s | %25s | %10s | %10s | %25s| %25s| %25s\n","ID ARCADE","NACIONALIDAD","JUGADORES","FICHAS","JUEGO","SALON","SONIDO");
+			printf("%10s | %25s | %10s | %10s | %25s| %25s| %25s| %25s\n","ID ARCADE","NACIONALIDAD","JUGADORES","FICHAS","JUEGO","GENERO","SALON","SONIDO");
 			for(i = 0; i<cantidadArcades;i++)
 			{
 				pAux = ll_get(thisArcades,i);
@@ -677,10 +677,12 @@ int controller_ArcadesaveAsBinary(char* path , LinkedList* this)
 		{
 			if(cantidadArcade>0)
 			{
+				//CUANDO LOS GUARDA, LOS ORDENA POR ID
+				controller_sortArcadeById(this);
 				for(i=0;i<cantidadArcade;i++)
 				{
 					auxArcade = ll_get(this, i);
-					fwrite(auxArcade,sizeof(Salon),1,pArchivo);
+					fwrite(auxArcade,sizeof(Arcade),1,pArchivo);
 				}
 			}
 
@@ -722,12 +724,10 @@ int controller_editArcade(LinkedList* thisArcades, LinkedList* thisJuegos, Linke
 {
 
 	int retorno;
-	int i;
 	int indexArcade;
 	int auxId;
 	int option;
 	int jugadores;
-	int idArcade;
 	int cantidadArcades;
 	int cantidadJuegos;
 	int cantidadSalones;
@@ -754,21 +754,13 @@ int controller_editArcade(LinkedList* thisArcades, LinkedList* thisJuegos, Linke
 				retorno = -4;
 				if(!Utn_GetNumeroInt(&auxId, "Qué Id desea modificar?", "Error. Debe ser entre 1 y 10000", 10000, 1, 3))
 				{
+					//BUSCO SI HAY UN ARCADE CON ESE INDICE
 					retorno = -5;
-					for(i = 0;i<cantidadArcades;i++)
-					{
-
-						auxArcade = ll_get(thisArcades, i);
-						Arcade_getIdArcade(auxArcade, &idArcade);
-						if(idArcade == auxId)
-						{
-							indexArcade = i;
-							break;
-						}
-					}
+					indexArcade = Arcade_findById(thisArcades, auxId);
 
 					if(indexArcade>=0)
 					{	//SI ENCUENTRA EL ID
+						auxArcade = ll_get(thisArcades, indexArcade);
 						retorno = -6;
 						if(!Utn_GetNumeroInt(&option, "Qué dato desea modificar?\n1. Cantidad de Jugadores\n2. Juego que contiene"
 								"\nOPCIÓN", "ERROR. debe ser entre 1 y 2", 2, 1, 3))
@@ -930,7 +922,7 @@ int Arcade_InputsData(LinkedList* thisArcades,LinkedList* thisJuegos,LinkedList*
 					//NO SE COLOCÓ BIEN CANTIDAD DE JUGADORES
 					retorno = -5;
 
-					if(!Utn_GetNumeroInt(&jugadores, "Ingrese la maxima cantidad de Jugadores:\nOPCIÓN", "La opción debe ser entre 1 y 4",LIMITE_JUGADORES, 1, 3))
+					if(!Utn_GetNumeroInt(&jugadores, "Ingrese la maxima cantidad de Jugadores", "La opción debe ser entre 1 y 4",LIMITE_JUGADORES, 1, 3))
 					{
 
 						//NO COLOCÓ BIEN CANTIDAD DE FICHAS
@@ -946,7 +938,7 @@ int Arcade_InputsData(LinkedList* thisArcades,LinkedList* thisJuegos,LinkedList*
 								if(Salon_findById(thisSalones, idSalon)>=0)
 								{
 									controller_ListJuego(thisJuegos);
-									if(!Utn_GetNumeroInt(&idJuego, "Ingrese ID del juego:\nOPCIÓN", "La opción debe ser entre 1 y 10000",10000, 1, 3))
+									if(!Utn_GetNumeroInt(&idJuego, "Ingrese ID del juego", "La opción debe ser entre 1 y 10000",10000, 1, 3))
 									{
 										//SI NO SE COLOCÓ BIEN EL ID DEL JUEGO
 										retorno = -8;
@@ -962,7 +954,8 @@ int Arcade_InputsData(LinkedList* thisArcades,LinkedList* thisJuegos,LinkedList*
 												{
 													ll_add(thisArcades, arcade);
 													puts("\nAlta exitosa\n");
-													printf("%10s | %25s | %10s | %10s | %25s| %25s| %25s\n","ID ARCADE","NACIONALIDAD","JUGADORES","FICHAS","JUEGO","SALON","SONIDO");
+													//printf("%10d | %25s | %10d | %10d | %25s| %25s| %25s| %25s\n",auxIdArcade,cAuxNacionalidad,cantidadJugadores,cantidadMaxFichas,cAuxNombreJuego,cAuxGeneroJuego,cAuxNombreSalon,cAuxTipoSonido);
+													printf("%10s | %25s | %10s | %10s | %25s| %25s| %25s| %25s\n","ID ARCADE","NACIONALIDAD","JUGADORES","FICHAS","JUEGO","GENERO","SALON","SONIDO");
 													Arcade_printOne(arcade, thisSalones, thisJuegos);
 													retorno = 0;
 												}
@@ -1007,6 +1000,7 @@ int Arcade_printOne(Arcade* this,LinkedList* thisSalones,LinkedList* thisJuegos)
 	int auxIdArcade;
 	int auxIdSalon;
 	int auxIdJuego;
+	int auxTipoJuego;
 	int cantidadMaxFichas;
 	int cantidadJugadores;
 	int auxTipoSonido;
@@ -1014,6 +1008,7 @@ int Arcade_printOne(Arcade* this,LinkedList* thisSalones,LinkedList* thisJuegos)
 	char cAuxTipoSonido[LEN_TIPOSONIDO];
 	char cAuxNombreJuego[LEN_NAME_JUEGO];
 	char cAuxNombreSalon[LEN_NAME_SALON];
+	char cAuxGeneroJuego[LEN_NAME_JUEGO];
 	Juego* pAuxJuego;
 	Salon* pAuxSalon;
 	pAuxJuego = NULL;
@@ -1045,6 +1040,22 @@ int Arcade_printOne(Arcade* this,LinkedList* thisSalones,LinkedList* thisJuegos)
 				if(pAuxJuego != NULL)
 				{
 					Juego_getNombre(pAuxJuego, cAuxNombreJuego);
+					Juego_getTipo(pAuxJuego, &auxTipoJuego);
+					switch(auxTipoJuego)
+					{
+					case TIPO_PLAT:
+						strncpy(cAuxGeneroJuego,"Plataforma",LEN_NAME_JUEGO);
+						break;
+					case TIPO_LAB:
+						strncpy(cAuxGeneroJuego,"Laberinto",LEN_NAME_JUEGO);
+						break;
+					case TIPO_AVEN:
+						strncpy(cAuxGeneroJuego,"Aventura",LEN_NAME_JUEGO);
+						break;
+					case TIPO_OTRO:
+						strncpy(cAuxGeneroJuego,"Otro",LEN_NAME_JUEGO);
+						break;
+					}
 					retorno = -4;
 					indexSalon = Salon_findById(thisSalones, auxIdSalon);
 					if(indexSalon>=0)
@@ -1053,7 +1064,7 @@ int Arcade_printOne(Arcade* this,LinkedList* thisSalones,LinkedList* thisJuegos)
 						if(pAuxSalon != NULL)
 						{
 							Salon_getNombre(pAuxSalon, cAuxNombreSalon);
-							printf("%10d | %25s | %10d | %10d | %25s| %25s| %25s\n",auxIdArcade,cAuxNacionalidad,cantidadJugadores,cantidadMaxFichas,cAuxNombreJuego,cAuxNombreSalon,cAuxTipoSonido);
+							printf("%10d | %25s | %10d | %10d | %25s| %25s| %25s| %25s\n",auxIdArcade,cAuxNacionalidad,cantidadJugadores,cantidadMaxFichas,cAuxNombreJuego,cAuxGeneroJuego,cAuxNombreSalon,cAuxTipoSonido);
 							retorno = 0;
 						}
 
@@ -1070,4 +1081,209 @@ int Arcade_printOne(Arcade* this,LinkedList* thisSalones,LinkedList* thisJuegos)
 	}
 	return retorno;
 }
+
+
+/// @fn int Arcade_printOneSpecial1Arcade* this,LinkedList* thisJuegos)
+/// @brief Imprimir un Arcade con sus datos y el nombre del juego que contiene
+///
+/// @pre
+/// @post
+/// @param this puntero a la entidad
+/// @param thisJuegos array de Juegos
+/// @return -1 si this o array de Juegos es NULL, -2 si alguno de los gets es NULL, -3 si no se pudo encontrar el juego,
+/// -4 si no se pudo encontrar el salon 0 si salio todo bien
+int Arcade_printOneSpecial1(Arcade* this,LinkedList* thisJuegos)
+{
+	int retorno;
+	int indexJuego;
+	int auxIdArcade;
+	int auxIdJuego;
+	int cantidadMaxFichas;
+	int cantidadJugadores;
+	int auxTipoSonido;
+	char cAuxNacionalidad[LEN_NAC];
+	char cAuxTipoSonido[LEN_TIPOSONIDO];
+	char cAuxNombreJuego[LEN_NAME_JUEGO];
+	Juego* pAuxJuego;
+	pAuxJuego = NULL;
+
+
+	retorno = -1;
+	if(this != NULL && thisJuegos != NULL)
+	{
+		retorno = -2;
+		if(!Arcade_getIdArcade(this, &auxIdArcade) && !Arcade_getIdJuego(this, &auxIdJuego) &&
+				!Arcade_getJugadores(this, &cantidadJugadores) && !Arcade_getMaxFichas(this, &cantidadMaxFichas) && !Arcade_getTipoSonido(this, &auxTipoSonido)
+				&& !Arcade_getNacionalidad(this, cAuxNacionalidad))
+		{
+			switch(auxTipoSonido)
+			{
+			case TIPE_MONO:
+				strncpy(cAuxTipoSonido,"Mono",LEN_TIPOSONIDO);
+				break;
+			case TIPO_ESTE:
+				strncpy(cAuxTipoSonido,"Estereo",LEN_TIPOSONIDO);
+				break;
+			}
+
+			retorno = -3;
+			indexJuego = Juego_findById(thisJuegos, auxIdJuego);
+			if(indexJuego>=0)
+			{
+				pAuxJuego = ll_get(thisJuegos, indexJuego);
+				if(pAuxJuego != NULL)
+				{
+					Juego_getNombre(pAuxJuego, cAuxNombreJuego);
+					printf("%10d | %25s | %10d | %10d | %25s| %25s\n",auxIdArcade,cAuxNacionalidad,cantidadJugadores,cantidadMaxFichas,cAuxNombreJuego,cAuxTipoSonido);
+					retorno = 0;
+
+
+
+				}
+
+			}
+
+		}
+
+	}
+	return retorno;
+}
+
+
+
+/// @fn int Arcade_CountByGeneroGame(LinkedList*, LinkedList*, int)
+/// @brief Contar los arcades que contienen un tipo de genero de juego determinado en un salon determinado
+///
+/// @pre
+/// @post
+/// @param thisArcade
+/// @param thisJuego
+/// @param generoGame
+/// @return la cantidad de juegos del genero encontrados en arcades.
+int Arcade_CountByGeneroGameInSalon(LinkedList* thisArcade, LinkedList* thisJuego, int generoGame, int idSalon)
+{
+	int i;
+	int idJuego;
+	int indexJuego;
+	int cantidadJuegos;
+	int cantidadArcades;
+	int idSalonAux;
+	int auxTipoJuego;
+	int contadorJuegosPorGenero;
+	Arcade* pAuxArcade;
+	Juego* pAuxJuego;
+	pAuxArcade = NULL;
+	pAuxJuego = NULL;
+	contadorJuegosPorGenero = 0;
+	if(thisArcade != NULL && thisJuego != NULL)
+	{
+		cantidadArcades = ll_len(thisArcade);
+		cantidadJuegos = ll_len(thisJuego);
+		if(cantidadArcades>0 && cantidadJuegos>0)
+		{
+			for(i = 0;i<cantidadArcades;i++)
+			{
+				pAuxArcade = ll_get(thisArcade, i);
+				if(pAuxArcade != NULL)
+				{
+					if(!Arcade_getIdJuego(pAuxArcade, &idJuego) && !Arcade_getIdSalon(pAuxArcade, &idSalonAux))
+					{
+						indexJuego = Juego_findById(thisJuego, idJuego);
+						if(indexJuego>=0 && idSalon == idSalonAux)
+						{
+							pAuxJuego = ll_get(thisJuego, indexJuego);
+							if(pAuxJuego != NULL)
+							{
+								if(!Juego_getTipo(pAuxJuego, &auxTipoJuego))
+								{
+									if(auxTipoJuego == generoGame)
+									{
+										contadorJuegosPorGenero++;
+									}
+								}
+
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return contadorJuegosPorGenero;
+}
+
+/// @fn int Arcade_printByIDSalon(LinkedList*, LinkedList*, int, int(*)(Arcade*, LinkedList*))
+/// @brief
+///
+/// @pre
+/// @post
+/// @param thisArcade
+/// @param thisJuego
+/// @param idSalon id del salon a imprimir
+/// @param pFuncImpresion Puntero a la fucion para imprirmir arcades
+/// @param pFuncSort Puntero a funcion ordenar arcades.
+/// @param order 1 ascendente y 0 descendente
+/// @return-1 si alguno de los parámetros es NULL o el ID es menor o igual a 0
+/// -2 si no hay arcades ni juegos, -3 si no se encontraron arcades con el id de salon, 0 si salio todo bien
+int Arcade_printByIDSalon(LinkedList* thisArcade, LinkedList* thisJuego, int idSalon,int (*pFuncImpresion)(Arcade*,LinkedList*),int (*pFuncSort)(void* this1, void* this2),int order)
+{
+	int i;
+	int cantidadJuegos;
+	int flagArcadesEnSalon;
+	int cantidadArcades;
+	int idSalonAux;
+	int retorno;
+	Arcade* pAuxArcade;
+	pAuxArcade = NULL;
+	retorno = -1;
+	flagArcadesEnSalon = 1;
+
+	if(thisArcade != NULL && thisJuego != NULL && idSalon>0 && (order == 1 || order == 0))
+	{
+		cantidadArcades = ll_len(thisArcade);
+		cantidadJuegos = ll_len(thisJuego);
+		retorno = -2;
+		//VERIFICO QUE LA CANTIDAD DE ARCADES Y JUEGOS SEA MAYOR A 0
+		if(cantidadArcades>0 && cantidadJuegos>0)
+		{
+			for(i = 0;i<cantidadArcades;i++)
+			{
+				ll_sort(thisArcade,pFuncSort,order);
+				pAuxArcade = ll_get(thisArcade, i);
+				if(pAuxArcade != NULL)
+				{
+					if(!Arcade_getIdSalon(pAuxArcade, &idSalonAux))
+					{
+						if(idSalon == idSalonAux)
+						{
+							if(flagArcadesEnSalon == 1)
+							{
+								puts("\nDATOS DEL ARCADE\n\n");
+								printf("%10s | %25s | %10s | %10s | %25s| %25s\n","ID ARCADE","NACIONALIDAD","JUGADORES","FICHAS","NOMBRE JUEGO","TIPO SONIDO");
+								flagArcadesEnSalon = 0;
+							}
+
+							pFuncImpresion(pAuxArcade, thisJuego);
+						}
+					}
+				}
+			}
+			if(flagArcadesEnSalon == 1)
+			{
+				retorno = -3;
+			}
+			else
+			{
+				retorno = 0;
+			}
+		}
+	}
+
+	return retorno;
+}
+
+
+
+
 

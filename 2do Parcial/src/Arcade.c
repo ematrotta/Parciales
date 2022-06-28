@@ -473,88 +473,6 @@ int Arcade_GetIdArcadeFromBinary(int* pId, char* path)
     return retorno;
 }
 
-/*
-/// @fn int Arcade_InputsData(LinkedList*, char[])
-/// @brief Agregar datos a una entidad de forma manual
-///
-/// @pre
-/// @post
-/// @param this Array de la estructura
-/// @param mensajeError
-/// @return -1 si alguno de los parametros es NULL, -2 si se ingresó mal el nombre, -3 si ingreso mal la direccion,
-/// -4 si ingreso mal el tipo, -5 si ingreso un ID menor o igual a 0, -6 si no se generó una entidad en memoria dinamica
-/// 0 si salio todo bien
-int Arcade_InputsData(LinkedList* this,char mensajeError[])
-{
-	int retorno;
-	int auxTipo;
-	int id;
-	char auxNombre[LEN_NAME_SALON];
-	char auxDireccion[LEN_DIR_SALON];
-
-	retorno = -1;
-
-
-	if(this != NULL && mensajeError!= NULL)
-	{
-
-
-		Arcade* arcade;
-		//INGRESO MAL EL NOMBRE
-		retorno = -2;
-
-		if(!Utn_GetStringAlfaNumericaPlus(auxNombre, "Ingrese un Nombre", "No es un Nombre. Reintente", LEN_NAME_SALON, 3))
-		{
-			//INGRESO MAL DIRECCION
-			retorno = -3;
-
-			if(!Utn_GetStringAlfaNumericaPlus(auxDireccion, "Ingrese una dirección", "No es una Direccion. Reintente", LEN_DIR_SALON, 3))
-			{
-				//INGRESO MAL TIPO
-				retorno = -4;
-
-				if(!Utn_GetNumeroInt(&auxTipo, "Ingrese el tipo:\n1. Shopping\n"
-						"2. Local\nOPCIÓN", "La opción debe ser entre 1 y 2", 2, 1, 3))
-				{
-					//NO SE COLOCÓ BIEN EL ID
-					retorno = -5;
-					id = Arcade_IdGenerator();
-					if(id>0)
-					{
-						retorno = -6;
-						arcade = Arcade_newParametros(id, auxTipo, auxNombre, auxDireccion);
-						if(arcade != NULL)
-						{
-							ll_add(this, arcade);
-							puts("\nAlta exitosa\n");
-							printf("%10s | %25s | %25s | %11s\n\n","ID","NOMBRE","DIRECCION","TIPO");
-							Arcade_printOne(arcade);
-							retorno = 0;
-						}
-
-
-					}
-
-
-
-				}
-			}
-		}
-
-		if(retorno<0)
-		{
-			printf("\n%s\n",mensajeError);
-			free(arcade);
-			arcade = NULL;
-		}
-
-
-	}
-
-	return retorno;
-}
-
-*/
 /// @fn int Arcade_sortById(void*, void*)
 /// @brief Retornar un valor comparando 2 elementos de 1 estructura: Id
 ///
@@ -602,6 +520,55 @@ int Arcade_sortById(void* this1, void* this2)
 
 	return retorno;
 }
+
+/// @fn int Arcade_sortByIdJuego(void*, void*)
+/// @brief Retornar un valor comparando 2 elementos de 1 estructura: Id de Juego
+///
+/// @pre
+/// @post
+/// @param this1
+/// @param this2
+/// @return -2 si ingresó mal alguno de los parámetros, -1 si el elemento 1 es menor que el 2, 1 si el elemento 1 es mayor que el
+///  2, 0 si ambos son iguales
+int Arcade_sortByIdJuego(void* this1, void* this2)
+{
+	int retorno;
+	retorno = -2;
+	if(this1 != NULL && this2 != NULL)
+	{
+		Arcade* ArcadeUno;
+		Arcade* ArcadeDos;
+		//CASTEO LOS VOID*
+		ArcadeUno = (Arcade*)this1;
+		ArcadeDos = (Arcade*)this2;
+		int idUno;
+		int idDos;
+
+		if(!Arcade_getIdJuego(ArcadeUno, &idUno) && !Arcade_getIdJuego(ArcadeDos, &idDos))
+		{
+
+			if(idUno<idDos)
+			{
+				retorno = -1;
+			}
+			else
+			{
+				if(idUno>idDos)
+				{
+					retorno = 1;
+				}
+				else
+				{
+					retorno = 0;
+				}
+
+			}
+		}
+	}
+
+	return retorno;
+}
+
 
 
 /// @fn int Arcade_findById(LinkedList*, int)
@@ -681,3 +648,40 @@ int Arcade_findByIdSalon(LinkedList* this, int id)
 	return retorno;
 }
 
+
+/// @fn int Arcade_CuantitySalonByIdSalon(LinkedList*, int)
+/// @brief Calcular catidad de Arcades con un ID de salon
+///
+/// @pre
+/// @post
+/// @param this
+/// @param id
+/// @return Cantidad de Arcades por id de Salon
+int Arcade_CuantitySalonByIdSalon(LinkedList* this, int id)
+{
+	int i;
+	int cantidadSalon;
+	int cantidadArcade;
+	int auxId;
+	Arcade* pAuxArcade;
+	pAuxArcade = NULL;
+	cantidadSalon = 0;
+	if(this != NULL && id>0)
+	{
+		cantidadArcade = ll_len(this);
+		for(i = 0;i<cantidadArcade;i++)
+		{
+			pAuxArcade = ll_get(this, i);
+			if(pAuxArcade != NULL)
+			{
+				Arcade_getIdSalon(pAuxArcade, &auxId);
+				if(auxId == id)
+				{
+					cantidadSalon++;
+				}
+			}
+
+		}
+	}
+	return cantidadSalon;
+}
