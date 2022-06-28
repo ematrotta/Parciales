@@ -205,7 +205,7 @@ int main(void) {
 					break;
 					case 'F':
 						//IMPRIMIR SALON Y ARCADES CON MAYOR CANTIDAD DE ARCADES
-						if(Informes_printSalonConMasArcades(Arcade_sortById,0,pArraySalones, pArrayArcades, pArrayJuegos) == -4)
+						if(Informes_printSalonConMasArcades(Arcade_sortById,1,pArraySalones, pArrayArcades, pArrayJuegos) == -4)
 						{
 							puts("\nNo hay Arcades para mostrar\n");
 						}
