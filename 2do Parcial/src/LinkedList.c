@@ -571,3 +571,57 @@ int ll_sort(LinkedList* this, int (*pFunc)(void* ,void*), int order)
 }
 
 
+/// @fn LinkedList ll_FilterLinkedList*(LinkedList*, int(*)(void*, void*), int)
+/// @brief Crear una lista clonada con el dato filtrado
+///
+/// @pre
+/// @post
+/// @param thisOriginal Lista original
+/// @param pFunc puntero a funcion
+/// @param contein 1 si quiero que contenga, 0 si quiero que no contenga
+/// @return NULL si no pudo obtener nada, o puntero a la nueva linkedListClonada
+LinkedList* ll_FilterLinkedList(LinkedList* thisOriginal, int (*pFunc)(void* ,void*),void* elementFilter, int contein)
+{
+	//int Arcade_FilterByIdSalon(void* this1, void* this2)
+	LinkedList* nuevaListaFiltrada;
+	int i;
+	int retornoFuncion;
+	int cantidadNodosOriginal;
+    void* pElementUno;
+    int flagElementoEnNuevaLista;
+    flagElementoEnNuevaLista = 1;
+
+	if(thisOriginal != NULL && pFunc != NULL && (contein == 0 || contein == 1))
+	{
+		cantidadNodosOriginal = ll_len(thisOriginal);
+		if(cantidadNodosOriginal>0)
+		{
+			nuevaListaFiltrada = ll_newLinkedList();
+			if(nuevaListaFiltrada != NULL)
+			{
+				for(i = 0;i<cantidadNodosOriginal;i++)
+				{
+
+					retornoFuncion = pFunc(pElementUno,elementFilter);
+					if((retornoFuncion == 0 && contein == 0) ||(retornoFuncion == 1 && contein == 1))
+					{
+						ll_add(nuevaListaFiltrada, pElementUno);
+						flagElementoEnNuevaLista = 0;
+					}
+
+				}
+			}
+			if(flagElementoEnNuevaLista == 1)
+			{
+				free(nuevaListaFiltrada);
+				nuevaListaFiltrada = NULL;
+			}
+
+		}
+
+	}
+
+    return nuevaListaFiltrada;
+
+}
+

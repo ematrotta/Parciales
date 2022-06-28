@@ -1283,6 +1283,80 @@ int Arcade_printByIDSalon(LinkedList* thisArcade, LinkedList* thisJuego, int idS
 	return retorno;
 }
 
+/// @fn int Arcade_printAcadeByIdSalon(LinkedList*, LinkedList*, LinkedList*, int)
+/// @brief
+///
+/// @pre
+/// @post
+/// @param thisArcades Array de arcades
+/// @param thisJuegos Array de juegos
+/// @param thisSalones Array de salones
+/// @param idSalon id de salon buscado
+/// @return -1 si se ingresaron los parametros NULL o idSalon<0, -2 si no hay arcades, -3 si la lista clonada
+/// no tiene nada, -4 si no se pudo imprimir al menos uno de los elementos de la lista clonada
+int Arcade_printAcadeByIdSalon(LinkedList* thisArcades,LinkedList* thisJuegos,LinkedList* thisSalones ,int idSalon)
+{
+
+	int retorno;
+	int i;
+	int flagArcadesEnListaFiltrada;
+	int cantidadListaClonada;
+	int cantidadArcades;
+	LinkedList* listaClonada;
+	Arcade* pAuxArcade;
+	pAuxArcade = NULL;
+	listaClonada = NULL;
+	flagArcadesEnListaFiltrada = 1;
+
+	retorno = -1;
+	if(thisArcades != NULL && thisJuegos != NULL && thisSalones != NULL && idSalon>0 )
+	{
+		cantidadArcades = ll_len(thisArcades);
+		if(cantidadArcades>0)
+		{
+			listaClonada = ll_FilterLinkedList(thisArcades,Arcade_FilterByIdSalon,&idSalon,1);
+			retorno = -2;
+			if(listaClonada != NULL)
+			{
+				cantidadListaClonada = ll_len(listaClonada);
+				retorno = -3;
+				if(cantidadListaClonada>0)
+				{
+					for(i = 0;i<cantidadListaClonada;i++)
+					{
+						pAuxArcade = ll_get(listaClonada, i);
+						if(pAuxArcade != NULL)
+						{
+							if(flagArcadesEnListaFiltrada == 1)
+							{
+								printf("%10s | %25s | %10s | %10s | %25s| %25s| %25s| %25s\n","ID ARCADE","NACIONALIDAD","JUGADORES","FICHAS","JUEGO","GENERO","SALON","SONIDO");
+								flagArcadesEnListaFiltrada = 0;
+							}
+							Arcade_printOne(pAuxArcade, thisSalones, thisJuegos);
+
+						}
+
+					}
+					ll_deleteLinkedList(listaClonada);
+					//SI NO SE PUDO FILTRAR NADA
+					if(flagArcadesEnListaFiltrada == 1)
+					{
+						retorno = -4;
+					}
+					else
+					{
+						retorno = 0;
+					}
+				}
+			}
+		}
+
+	}
+
+	return retorno;
+}
+
+
 
 
 

@@ -81,7 +81,7 @@ int Informes_listarSalonesConMas4Arcades(LinkedList* thisSalones,LinkedList* thi
 }
 
 
-//B) LISTAR LOS SALONES PARA MÁS DE 4 JUGADORES
+//B) LISTAR LOS ARCADE PARA MÁS DE 4 JUGADORES
 /// @fn int Informes_printAcadeParaMas2Jugadores(LinkedList*, LinkedList*, LinkedList*)
 /// @brief Imprimir los Arcades para más de 2 Jugadores
 ///
@@ -479,4 +479,41 @@ int Informes_ImprimirJuegoPorNombreYCondiciones(int(*pFuncOrderGames)(void*,void
 
 }
 
+//H) IMPRIMIR ARCADES SEGUN ID DE SALON
+int Informes_ImprimirArcadesByIdSalon(LinkedList* thisArcades, LinkedList* thisJuegos,LinkedList* thisSalones)
+{
+	int retorno;
+	int opSalon;
+	int indexSalon;
+	Salon* pAuxSalon;
+	pAuxSalon = NULL;
+	retorno = -1;
+	if(thisArcades != NULL && thisJuegos != NULL && thisSalones != NULL)
+	{
+		retorno = -2;
+		if(!Utn_GetNumeroInt(&opSalon, "Ingrese un id de un Salon", "ERROR. debe ser entre 1 y 10000", 10000, 1, 3))
+		{
+			indexSalon = Salon_findById(thisSalones, opSalon);
+			retorno = -3;
+			if(indexSalon>=0)
+			{
+				pAuxSalon = ll_get(thisSalones, indexSalon);
+				if(pAuxSalon != NULL)
+				{
+
+					if(!Arcade_printAcadeByIdSalon(thisArcades, thisJuegos, thisSalones, opSalon))
+					{
+						retorno = 0;
+					}
+
+
+				}
+
+
+			}
+		}
+	}
+
+	return retorno;
+}
 

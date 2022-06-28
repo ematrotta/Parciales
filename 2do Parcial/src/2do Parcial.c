@@ -164,7 +164,8 @@ int main(void) {
 						"Ordenado de manera ascendente.\n"
 						"\tG) Listar los arcades que cumplan con sonido MONO y el género de su juego sea PLATAFORMA, informando nombre "
 						"de juego, género y cantidad de jugadores que soporta el arcade. El listado deberá estar ordenado por nombre de juego.\n"
-						"\nOPCION", "La opción debe ser entre A y G", 'G', 'A', 3))
+						"\tH) Imprimir arcades segun ID de salon\n"
+						"\nOPCION", "La opción debe ser entre A y G", 'H', 'A', 3))
 				{
 					switch(opSubmenu)
 					{
@@ -217,6 +218,12 @@ int main(void) {
 							puts("\nNo hay Arcades Con las caracteristicas indicadas\n");
 						}
 					break;
+					case 'H':
+						if(Informes_ImprimirArcadesByIdSalon(pArrayArcades, pArrayJuegos, pArraySalones))
+						{
+							puts("\nNo se encontraron Arcades con ese ID\n");
+						}
+						break;
 					}
 				}
 				break;

@@ -62,6 +62,7 @@ int Arcade_sortByIdJuego(void* this1, void* this2);
 int Arcade_findById(LinkedList* this, int id);
 int Arcade_findByIdSalon(LinkedList* this, int id);
 int Arcade_CuantitySalonByIdSalon(LinkedList* this, int id);
+int Arcade_FilterByIdSalon(void* this1, void* this2);
 
 
 

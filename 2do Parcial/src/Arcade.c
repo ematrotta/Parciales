@@ -685,3 +685,39 @@ int Arcade_CuantitySalonByIdSalon(LinkedList* this, int id)
 	}
 	return cantidadSalon;
 }
+
+
+/// @fn int Arcade_FilterByIdSalon(void*, void*)
+/// @brief Retornar un valor verificando que contenga dentro otro: idSalon
+///
+/// @pre
+/// @post
+/// @param this1
+/// @param this2
+/// @return 1 si contiene el id Salon, 0 si no lo contiene
+int Arcade_FilterByIdSalon(void* this1, void* this2)
+{
+	int retorno;
+	retorno = -2;
+	if(this1 != NULL && this2 != NULL)
+	{
+		Arcade* ArcadeUno;
+		int* idSalon;
+		//CASTEO LOS VOID*
+		ArcadeUno = (Arcade*)this1;
+		idSalon = (int*)this2;
+		int idSalonAux;
+
+
+		if(!Arcade_getIdArcade(ArcadeUno,&idSalonAux))
+		{
+			retorno = 0;
+			if(idSalonAux == *idSalon)
+			{
+				retorno = 1;
+			}
+		}
+	}
+
+	return retorno;
+}

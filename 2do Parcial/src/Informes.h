@@ -23,7 +23,8 @@ int Informes_printSalonConArcadesYJuegos(LinkedList* thisSalon, LinkedList* this
 int Informes_printSalonConMasArcades(int(*pFuncOrderArcades)(void*,void*),int orderArcade,LinkedList* thisSalon, LinkedList* thisArcade, LinkedList* thisJuego);
 //G)
 int Informes_ImprimirJuegoPorNombreYCondiciones(int(*pFuncOrderGames)(void*,void*),int orderGames,LinkedList* thisJuegos, LinkedList* thisArcades, int genero, int tipoSonido);
-
+//H)
+int Informes_ImprimirArcadesByIdSalon(LinkedList* thisArcades, LinkedList* thisJuegos,LinkedList* thisSalones);
 
 
 #endif /* SRC_INFORMES_H_ */

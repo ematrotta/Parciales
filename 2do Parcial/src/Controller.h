@@ -43,7 +43,7 @@ int Arcade_printOne(Arcade* this,LinkedList* thisSalones,LinkedList* thisJuegos)
 int Arcade_printByIDSalon(LinkedList* thisArcade, LinkedList* thisJuego, int idSalon,int (*pFuncImpresion)(Arcade*,LinkedList*),int (*pFuncSort)(void* this1, void* this2),int order);
 int Arcade_printOneSpecial1(Arcade* this,LinkedList* thisJuegos);
 int Arcade_CountByGeneroGameInSalon(LinkedList* thisArcade, LinkedList* thisJuego, int generoGame, int idSalon);
-
+int Arcade_printAcadeByIdSalon(LinkedList* thisArcades,LinkedList* thisJuegos,LinkedList* thisSalones ,int idSalon);
 
 #endif /* CONTROLLER_H_ */
 
