@@ -601,7 +601,7 @@ LinkedList* ll_FilterLinkedList(LinkedList* thisOriginal, int (*pFunc)(void* ,vo
 			{
 				for(i = 0;i<cantidadNodosOriginal;i++)
 				{
-
+					pElementUno = ll_get(thisOriginal, i);
 					retornoFuncion = pFunc(pElementUno,elementFilter);
 					if((retornoFuncion == 0 && contein == 0) ||(retornoFuncion == 1 && contein == 1))
 					{
