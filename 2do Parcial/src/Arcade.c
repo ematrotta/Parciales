@@ -709,7 +709,8 @@ int Arcade_FilterByIdSalon(void* this1, void* this2)
 		int idSalonAux;
 
 
-		if(!Arcade_getIdArcade(ArcadeUno,&idSalonAux))
+		//MALDITO PROBLEMA
+		if(!Arcade_getIdSalon(ArcadeUno,&idSalonAux))
 		{
 			retorno = 0;
 			if(idSalonAux == *idSalon)
